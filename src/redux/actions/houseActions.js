@@ -1,6 +1,6 @@
 import api, { API } from "../../backend";
 
-/* eslint-disable no-undef */
+ 
 
 export const getHouseDetails = (id) => async (dispatch) => {
   try {

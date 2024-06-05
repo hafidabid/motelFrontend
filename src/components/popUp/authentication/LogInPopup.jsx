@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import axios from "axios";
-import { useState } from "react";
+import {useContext, useState} from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { PulseLoader } from "react-spinners";
@@ -10,6 +11,7 @@ import { userLogIn } from "../../../redux/actions/userActions";
 import { toast } from "react-hot-toast";
 import errorIcon from "../../../assets/basicIcon/errorIcon.png";
 import errorMessageIcon from "../../../assets/basicIcon/errorIcon2.png";
+import {Web3AuthContext} from "../../Web3/Web3AuthProvider.jsx";
 
 const LogInPopup = ({
   loginEmail,
@@ -18,34 +20,28 @@ const LogInPopup = ({
   setDefaultPopup,
   setShowErrorMessage,
   showErrorMessage,
+    nonce
 }) => {
   const {
     handleSubmit,
     register,
     formState: { errors },
   } = useForm();
-  const [passwordVisible, setPasswordVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const user = useSelector((state) => state.user);
   console.log(user);
   const dispatch = useDispatch();
-
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
-
-  const handleShowError = () => {
-    setShowErrorMessage(false);
-  };
+  const { account, signMessage } = useContext(Web3AuthContext);
 
   const handleLogin = async (data) => {
     setIsLoading(true);
     setShowErrorMessage(false);
     try {
+      const signedMessage = await signMessage(`nonce_${nonce}`);
       const response = await axios.post(`${API}auth/log_in`, {
-        email: loginEmail,
-        password: data.password,
+        ethAddress: account,
+        signature: signedMessage
       });
       const userData = response.data;
       setIsLoading(false);
@@ -107,41 +103,6 @@ const LogInPopup = ({
           </div>
         )}
         <form onSubmit={handleSubmit(handleLogin)}>
-          <div className="relative my-4">
-            <input
-              type={passwordVisible ? "text" : "password"}
-              placeholder="Password"
-              className="w-full border-[1.5px] border-[#dddddd] p-3 rounded-lg transition-all duration-300"
-              {...register("password", {
-                required: true,
-                pattern: /^.{8,}$/,
-              })}
-              onChange={handleShowError}
-            />
-            <span
-              className={`absolute ${
-                errors.password ? "top-[35%]" : "top-[50%]"
-              }  right-3 transform -translate-y-1/2 text-[#222222] text-xs font-semibold underline cursor-pointer`}
-              onClick={togglePasswordVisibility}
-            >
-              {passwordVisible ? "Hide" : "Show"}
-            </span>
-            {errors.password && (
-              <div
-                role="alert"
-                className=" flex flex-row items-center gap-2 mt-1"
-              >
-                <img
-                  src={errorIcon}
-                  alt="Last name is requires"
-                  className="w-5"
-                />
-                <p className="text-xs text-[#c13515]">
-                  At least 8 characters long
-                </p>
-              </div>
-            )}
-          </div>
           <button
             className={`bg-[#ff385c] hover:bg-[#d90b63] transition-all duration-300 text-white font-medium rounded-lg p-3 w-full disabled:bg-[#dddddd] ${
               isLoading ? " cursor-not-allowed" : ""
@@ -157,20 +118,14 @@ const LogInPopup = ({
                 speedMultiplier={0.6}
               />
             ) : (
-              "Log in"
+              "Continue"
             )}
           </button>
         </form>
       </div>
-      <Link className=" text-[#222222] text-sm font-medium underline pt-3 px-8">
-        Forgot Password?
-      </Link>
+
 
       <div className=" pt-4 px-8 italic pb-7">
-        <ul className=" list-disc text-xs text-[#222222] opacity-80">
-          <p>You can use below test credentials to login!</p>
-          <li>Password: guest1234</li>
-        </ul>
       </div>
     </div>
   );

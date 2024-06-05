@@ -1,6 +1,8 @@
 import api from "../../backend";
+import {useContext} from "react";
+import {Web3AuthContext} from "../../components/Web3/Web3AuthProvider.jsx";
 
-/* eslint-disable no-undef */
+ 
 export const userSignUp = (userData) => async (dispatch) => {
   dispatch({
     type: "USER_SIGN_UP",
@@ -82,7 +84,11 @@ export const userRole = () => async (dispatch, getState) => {
 };
 
 export const userLogOut = () => async (dispatch) => {
+
   const response = await api.post("/auth/logout");
   // console.log(response)
-  dispatch({ type: "USER_LOG_OUT" });
+  if (response.status === 200 || response.status === 201) {
+    dispatch({ type: "USER_LOG_OUT" });
+  }
+
 };

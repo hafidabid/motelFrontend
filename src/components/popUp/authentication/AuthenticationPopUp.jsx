@@ -17,6 +17,7 @@ const AuthenticationPopUp = ({ popup, setPopup }) => {
   const [loginEmail, setLoginEmail] = useState(null);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const popUpRef = useRef(null);
+  const [nonce, setNonce] = useState("")
 
   const handleCloseLoginPopup = () => {
     setShowLoginPopup(false);
@@ -99,6 +100,7 @@ const AuthenticationPopUp = ({ popup, setPopup }) => {
                   setShowLoginPopup={setShowLoginPopup}
                   setShowCreateUserPopup={setShowCreateUserPopup}
                   setLoginEmail={setLoginEmail}
+                  setNonce={setNonce}
                 />
               )}
               {!showLoginPopup ? null : (
@@ -110,6 +112,7 @@ const AuthenticationPopUp = ({ popup, setPopup }) => {
                   setPopup={setPopup}
                   showErrorMessage={showErrorMessage}
                   setShowErrorMessage={setShowErrorMessage}
+                  nonce={nonce}
                 />
               )}
               {!showCreateUserPopup ? null : (
@@ -119,6 +122,7 @@ const AuthenticationPopUp = ({ popup, setPopup }) => {
                   setProfilePopup={setProfilePopup}
                   showCreatePopUp={setShowCreateUserPopup}
                   setPopup={setPopup}
+                  nonce={nonce}
                 />
               )}
               {!profilePopup ? null : (

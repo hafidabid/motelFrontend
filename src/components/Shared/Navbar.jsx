@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import {useState, useRef, useEffect, useContext} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import AuthenticationPopUp from "../popUp/authentication/AuthenticationPopUp";
@@ -9,6 +9,7 @@ import motelLogo from "../../assets/Travel_Logo.png";
 import userProfile from "../../assets/basicIcon/user-profile.png";
 import house from "../../assets/basicIcon/houseWhite.png";
 import toast from "react-hot-toast";
+import {Web3AuthContext} from "../Web3/Web3AuthProvider.jsx";
 
 const Navbar = () => {
   const user = useSelector((state) => state.user.userDetails);
@@ -27,9 +28,11 @@ const Navbar = () => {
   const [popup, setPopup] = useState(false);
 
   const dispatch = useDispatch();
+  const { disconnectWallet } = useContext(Web3AuthContext);
 
   const handleLogout = () => {
     dispatch(userLogOut());
+    disconnectWallet()
   };
 
   useEffect(() => {

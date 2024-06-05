@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import axios from "axios";
-import { useState } from "react";
+import {useContext, useState} from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
@@ -9,16 +9,18 @@ import { PulseLoader } from "react-spinners";
 import errorIcon from "../../../assets/basicIcon/errorIcon.png";
 import { API } from "../../../backend";
 import { userSignUp } from "../../../redux/actions/userActions";
+import {Web3AuthContext} from "../../Web3/Web3AuthProvider.jsx";
 
 const CreateUserPopup = ({
   loginEmail,
   setProfilePopup,
   showCreatePopUp,
   setPopup,
+    nonce
 }) => {
   const [inputDateFocused, setInputDateFocused] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { account, signMessage } = useContext(Web3AuthContext);
   const {
     handleSubmit,
     register,
@@ -36,12 +38,12 @@ const CreateUserPopup = ({
     setInputDateFocused(false);
   };
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
-
   const handleCreateUser = async (data) => {
     // // console.log(data);
+    // ask for signature first
+    const signedMessage = await signMessage(`nonce_${nonce}`);
+    console.log("signed message is", signedMessage);
+
     let user = {
       name: {
         firstName: data.firstName,
@@ -49,7 +51,9 @@ const CreateUserPopup = ({
       },
       emailId: data.email,
       birthDate: data.birthDate,
-      password: data.password,
+      password: "",
+      signature: signedMessage,
+      ethAddress: account.toString().toLowerCase()
     };
     setIsLoading(true);
     try {
@@ -211,45 +215,6 @@ const CreateUserPopup = ({
             }`}
           >
             We&apos;ll email you trip confirmations and receipts.
-          </p>
-        </div>
-        <div className="relative">
-          <input
-            type={passwordVisible ? "text" : "password"}
-            placeholder="Password"
-            className="w-full border-[1.5px] border-[#dddddd] p-3 rounded-lg transition-all duration-300"
-            {...register("password", {
-              required: true,
-              pattern: /^(?=.*[a-z]).{8,}$/,
-            })}
-          />
-          <span
-            className="absolute top-[36%] right-3 transform -translate-y-1/2 text-[#222222] text-xs font-semibold underline cursor-pointer"
-            onClick={togglePasswordVisibility}
-          >
-            {passwordVisible ? "Hide" : "Show"}
-          </span>
-          {errors.password && (
-            <div
-              role="alert"
-              className=" flex flex-row items-center gap-2 mt-1"
-            >
-              <img
-                src={errorIcon}
-                alt="Last name is requires"
-                className="w-5"
-              />
-              <p className="text-xs text-[#c13515]">
-                At least 8 characters & Contains a number or symbol
-              </p>
-            </div>
-          )}
-          <p
-            className={`text-xs text-[#717171] mt-1 ${
-              errors.password ? "hidden" : "block opacity-60"
-            }`}
-          >
-            At least 8 characters & Contains a number or symbol
           </p>
         </div>
         <div>

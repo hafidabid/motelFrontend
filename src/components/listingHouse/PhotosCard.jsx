@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+ 
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { LiaPhotoVideoSolid } from "react-icons/lia";
@@ -50,13 +50,13 @@ const PhotosCard = () => {
         const imageFormData = new FormData();
         imageFormData.append("file", inputImage);
         imageFormData.append("upload_preset", "house-hunter");
-        imageFormData.append("cloud_name", "dlhexsnxq");
+        imageFormData.append("cloud_name", "dsmeolsh3");
 
         // saving to cloudinary
         setIsImgUploading(true);
         try {
           await fetch(
-            "https://api.cloudinary.com/v1_1/dlhexsnxq/image/upload",
+            "https://api.cloudinary.com/v1_1/dsmeolsh3/image/upload",
             {
               method: "POST",
               body: imageFormData,
@@ -69,7 +69,7 @@ const PhotosCard = () => {
               if (data.error) {
                 toast.error(data?.error?.message);
                 setIsImgUploading(false);
-                setImages(null);
+                //setImages(null);
               } else {
                 setIsImgUploading(false);
               }

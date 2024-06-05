@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+ 
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { navItem } from "./NavItem";
